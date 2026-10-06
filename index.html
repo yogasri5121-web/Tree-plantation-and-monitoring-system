@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="description"
+    content="Tree plantation and monitoring application"
+  >
+
+  <title>GreenTrack | Tree Monitoring</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <header class="topbar">
+    <a class="brand" href="#">
+      <span class="brand-mark">G</span>
+      <span>GreenTrack</span>
+    </a>
+
+
+  </header>
+
+  <main class="page-container">
+    <section class="intro">
+      <div>
+        <p class="eyebrow">COLLEGE PROJECT · TREE MONITORING</p>
+
+        <h1>Plant. Record. Care.</h1>
+
+        <p class="intro-description">
+          Keep a simple record of every planted tree and update its
+          growth, health, and maintenance needs.
+        </p>
+      </div>
+
+      <button id="open-add-form" class="primary-button" type="button">
+        + Add a tree
+      </button>
+    </section>
+
+    <section class="stats-grid" aria-label="Tree statistics">
+      <article class="stat-card total-card">
+        <span>Total trees</span>
+        <strong id="total-count">0</strong>
+        <small>Recorded this session</small>
+      </article>
+
+      <article class="stat-card">
+        <span>Healthy</span>
+        <strong id="healthy-count">0</strong>
+        <small class="healthy-text">Growing well</small>
+      </article>
+
+      <article class="stat-card">
+        <span>Needs care</span>
+        <strong id="care-count">0</strong>
+        <small class="care-text">Water or maintenance</small>
+      </article>
+
+      <article class="stat-card">
+        <span>Dead</span>
+        <strong id="dead-count">0</strong>
+        <small>May need replacement</small>
+      </article>
+    </section>
+
+    <section class="records-section">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">TREE REGISTER</p>
+          <h2>Plantation records</h2>
+        </div>
+
+        <label class="search-box">
+          <span>⌕</span>
+
+          <input
+            id="search-input"
+            type="search"
+            placeholder="Search ID, species or location"
+          >
+        </label>
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Tree</th>
+              <th>Location</th>
+              <th>Planted</th>
+              <th>Height</th>
+              <th>Health</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody id="tree-table-body"></tbody>
+        </table>
+
+        <div id="empty-state" class="empty-state">
+          <div class="empty-icon">↟</div>
+
+          <h3 id="empty-title">No trees recorded yet</h3>
+
+          <p id="empty-message">
+            Add your first tree to start monitoring the plantation.
+          </p>
+
+          <button
+            id="empty-add-button"
+            class="secondary-button"
+            type="button"
+          >
+            Add first tree
+          </button>
+        </div>
+      </div>
+    </section>
+
+    
+  </main>
+
+  <!-- Add Tree Dialog -->
+  <dialog id="tree-dialog">
+    <form id="tree-form" class="dialog-form">
+      <div class="dialog-heading">
+        <div>
+          <p class="eyebrow">NEW RECORD</p>
+          <h2>Add a planted tree</h2>
+        </div>
+
+        <button
+          class="close-button"
+          id="close-tree-dialog"
+          type="button"
+          aria-label="Close"
+        >
+          ×
+        </button>
+      </div>
+
+      <div class="form-grid">
+        <label>
+          Tree ID
+
+          <input
+            name="treeId"
+            type="text"
+            placeholder="For example, TREE-001"
+            maxlength="20"
+            required
+          >
+        </label>
+
+        <label>
+          Species
+
+          <input
+            name="species"
+            type="text"
+            placeholder="For example, Neem"
+            maxlength="40"
+            required
+          >
+        </label>
+
+        <label class="full-width">
+          Location
+
+          <input
+            name="location"
+            type="text"
+            placeholder="For example, College main garden"
+            maxlength="80"
+            required
+          >
+        </label>
+
+        <label>
+          Plantation date
+
+          <input
+            name="plantationDate"
+            type="date"
+            required
+          >
+        </label>
+
+        <label>
+          Initial height (cm)
+
+          <input
+            name="height"
+            type="number"
+            min="1"
+            max="5000"
+            placeholder="For example, 75"
+            required
+          >
+        </label>
+
+        <label class="full-width">
+          Health status
+
+          <select name="health" required>
+            <option value="Healthy">Healthy</option>
+            <option value="Needs Water">Needs Water</option>
+            <option value="Needs Maintenance">
+              Needs Maintenance
+            </option>
+            <option value="Dead">Dead</option>
+          </select>
+        </label>
+      </div>
+
+      <p id="tree-form-error" class="form-error"></p>
+
+      <div class="dialog-actions">
+        <button
+          id="cancel-tree-form"
+          class="text-button"
+          type="button"
+        >
+          Cancel
+        </button>
+
+        <button class="primary-button" type="submit">
+          Save tree
+        </button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Monitoring Dialog -->
+  <dialog id="monitor-dialog">
+    <form id="monitor-form" class="dialog-form">
+      <div class="dialog-heading">
+        <div>
+          <p class="eyebrow">MONITORING UPDATE</p>
+          <h2>Update tree</h2>
+        </div>
+
+        <button
+          class="close-button"
+          id="close-monitor-dialog"
+          type="button"
+          aria-label="Close"
+        >
+          ×
+        </button>
+      </div>
+
+      <input name="recordId" type="hidden">
+
+      <div id="selected-tree-summary" class="selected-tree"></div>
+
+      <div class="form-grid">
+        <label>
+          Current height (cm)
+
+          <input
+            name="height"
+            type="number"
+            min="1"
+            max="5000"
+            required
+          >
+        </label>
+
+        <label>
+          Inspection date
+
+          <input
+            name="lastInspection"
+            type="date"
+            required
+          >
+        </label>
+
+        <label class="full-width">
+          Health status
+
+          <select name="health" required>
+            <option value="Healthy">Healthy</option>
+            <option value="Needs Water">Needs Water</option>
+            <option value="Needs Maintenance">
+              Needs Maintenance
+            </option>
+            <option value="Dead">Dead</option>
+          </select>
+        </label>
+
+        <label class="full-width">
+          Maintenance notes
+
+          <textarea
+            name="notes"
+            rows="3"
+            maxlength="180"
+            placeholder="For example, water every morning"
+          ></textarea>
+        </label>
+      </div>
+
+      <div class="dialog-actions">
+        <button
+          id="cancel-monitor-form"
+          class="text-button"
+          type="button"
+        >
+          Cancel
+        </button>
+
+        <button class="primary-button" type="submit">
+          Save update
+        </button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
